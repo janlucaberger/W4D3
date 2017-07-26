@@ -4,6 +4,11 @@ class Cat < ActiveRecord::Base
   validates :color, inclusion: { in: CAT_COLORS }
   validates :sex, inclusion: { in: %w(M F) }
 
+  has_many :rental_requests,
+  class_name: :CatRentalRequest,
+  foreign_key: :cat_id,
+  dependent: :destroy
+
   def self.colors
     CAT_COLORS
   end
