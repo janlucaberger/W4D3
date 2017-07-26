@@ -6,6 +6,18 @@ class CatRentalRequest < ActiveRecord::Base
 
   belongs_to :cat
 
+  def approve!
+    CatRentalRequest.transaction do
+      overlapping_pending_requests.each do |request|
+        request.update!(status: "DENIED")
+      end
+      self.update!(status: "APPROVED")
+    end
+  end
+
+  def deny!
+    self.update(status: "DENIED")
+  end
 
   private
 
@@ -21,13 +33,17 @@ class CatRentalRequest < ActiveRecord::Base
       .where.not(id: self.id)
   end
 
+  def overlapping_pending_requests
+    overlapping_requests.where("status = 'PENDING'")
+  end
+
   def overlapping_approved_requests
     overlapping_requests.where("status = 'APPROVED'")
   end
 
   def does_not_overlap_approved_request
     if overlapping_approved_requests.exists?
-      self.errors.messages << "Cat is already rented out"
+      self.errors[:base] << "Cat is already rented out"
     end
   end
 end

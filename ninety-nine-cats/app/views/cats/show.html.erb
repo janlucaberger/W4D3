@@ -40,12 +40,17 @@
     <th>Status</th>
   </tr>
 
+<%  %>
+
   <% @cat.rental_requests.order(:start_date).each do |request| %>
     <tr>
       <td> <%= request.id%> </td>
       <td> <%= request.start_date %> </td>
       <td> <%= request.end_date %> </td>
       <td> <%= request.status %> </td>
+      <td>
+        <input type="submit" name="" value="Submit">
+      </td>
     </tr>
   <% end %>
 
